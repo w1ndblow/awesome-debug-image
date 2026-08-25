@@ -17,13 +17,13 @@ jobs:
     - name: Build the Docker image
       run: |
         ARGS="--tag awesome-debug:$GITHUB_SHA"
-        if [ -f $GITHUB_REF]; then
+        if [ -n $GITHUB_REF]; then
           ARGS=$ARGS' --tag windblow/awesome-debug:$GITHUB_REF'
         fi
         docker build . --file Dockerfile $ARGS
         
         docker push windblow/awesome-debug:$GITHUB_SHA
-        if [ -f $GITHUB_REF]; then 
+        if [ -n $GITHUB_REF]; then 
           docker push windblow/awesome-debug:$GITHUB_REF; 
         fi
 
