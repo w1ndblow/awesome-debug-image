@@ -1,0 +1,30 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: |
+        ARGS="--tags awesome-debug:$GITHUB_SHA"
+        if [ -f $GITHUB_REF]; then
+          ARGS=$ARGS' --tags windblow/awesome-debug:$GITHUB_REF'
+        fi
+        docker build . --file Dockerfile $ARGS
+        
+        docker push windblow/awesome-debug:$GITHUB_SHA
+        if [ -f $GITHUB_REF]; then 
+          docker push windblow/awesome-debug:$GITHUB_REF; 
+        fi
+
+        
