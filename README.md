@@ -150,7 +150,7 @@ s3_bench.sh --bucket my-bucket:eu-west-1 --bucket other-bucket:us-east-1 --sizes
 
 ```bash
 git tag v0.2.0
-git push origin v0.2.0
+git push --tags origin
 ```
 
 Для публикации в Docker Hub в секретах репозитория должен быть настроен `DOCKERHUBPASS`
