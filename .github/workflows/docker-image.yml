@@ -14,19 +14,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: docker/login-action@v2
+    # Логин нужен только для пуша образов; на pull request'ах (в т.ч. из форков)
+    # секреты недоступны, поэтому ограничиваем шаг пуш-событиями
+    - uses: docker/login-action@v3
+      if: github.event_name == 'push'
       with:
         username: "windblow"
         password: ${{ secrets.DOCKERHUBPASS }}
     - name: Build the Docker image
       run: |
-        ARGS="--tag windblow/awesome-debug:$GITHUB_SHA"
-        if [ -n $GITHUB_REF]; then
-          ARGS=$ARGS' --tag windblow/awesome-debug:$GITHUB_REF'
-        fi
-        docker build . --file Dockerfile $ARGS
-        
+        # Сборка идёт на всех событиях (проверка что образ вообще собирается)
+        docker build . --file Dockerfile \
+          --tag windblow/awesome-debug:$GITHUB_SHA \
+          --tag windblow/awesome-debug:latest
+    # Публикация — только при пуше в main; на PR образы не публикуются
+    - name: Push the Docker image
+      if: github.event_name == 'push'
+      run: |
         docker push windblow/awesome-debug:$GITHUB_SHA
-        if [ -n $GITHUB_REF]; then 
-          docker push windblow/awesome-debug:$GITHUB_REF; 
-        fi
+        docker push windblow/awesome-debug:latest
