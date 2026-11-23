@@ -11,14 +11,21 @@ RUN apt-get update && \
         linux-perf \
         libboost-all-dev \
         fish \
-        curl \
-        bc
+        bc \
+        iproute2 \
+        dnsutils \
+        iputils-ping \
+        tcpdump \
+        mtr-tiny \
+        netcat-openbsd \
+        curl
+
 
 RUN git clone https://github.com/brendangregg/FlameGraph.git /usr/local/bin
 RUN git clone https://github.com/brendangregg/pmc-cloud-tools.git /tmp/utils && chmod +x /tmp/utils/* && mv /tmp/utils/* /usr/local/bin/
 
 
-RUN curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash -s -- --system
+RUN curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash -s -- --system --skip-signature-verification
 
 COPY scripts/*.sh /usr/local/bin/
 
